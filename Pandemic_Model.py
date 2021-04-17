@@ -21,11 +21,11 @@ tot_pop = np.zeros((gridx, gridy, T))
 p = np.zeros((ind, gridx, gridy, T))      
 diff = np.zeros((gridx, gridy, T))
 
-#Transmission rate and diffusion coefficient(s) (Case diff_c < diff_c)
-trans_rate = 1.01
-case_diff_c = 0.25
+#Transmission rate and diffusion coefficient(s) (case_diff_c < diff_c)
+trans_rate = 1.05
+case_diff_c = 0.3
 diff_c = 0.9
-fall = 0.03
+fall = 0.01
 
 #Points of index cases and population diffusion start
 no_src = 40
@@ -112,6 +112,7 @@ def plot_tot_pop(t):
     plt.show()
 
 def net_cases(t):
+    ''' total number of cases after t days '''
     s = 0
     for i in range(1, gridx):
         for j in range(1, gridy):
@@ -119,18 +120,21 @@ def net_cases(t):
     return s
 
 def tot_cases_view(t):
+    ''' prints out the total number of cases recorded at every grid point up to time t '''
     for i in range(1, gridx):
         for j in range(1, gridy):
             print(tot_cases[i][j][t], end = " ")
         print()
 
 def tot_pop_view(t):
+    ''' prints out population at every grid point at time t '''
     for i in range(1, gridx):
         for j in range(1, gridy):
             print(tot_pop[i][j][t], end = " ")
         print()
         
 def net_pop(t):
+    ''' total population of city at time t '''
     s = 0
     for i in range(1, gridx):
         for j in range(1, gridy):
@@ -138,11 +142,33 @@ def net_pop(t):
     return s
 
 def daily_cases():
+    ''' returns list where each element is the number of new cases on a day; day corresponds to list index '''
+    d_cases = []
+    for t in range(1, T):
+        d_cases += [net_cases(t)-net_cases(t-1)]
+    return d_cases
+
+def net_cases_list():
+    ''' returns list where each element is the total number of cases recorded up till time t; day corresponds to list index '''
+    n_cases = []
+    for t in range(T):
+        n_cases += [net_cases(t)]
+    return n_cases
+
+def print_daily_cases():
     for t in range(1, T):
             if t%10 == 0:
                     print()
-            print(net_cases(t)-net_cases(t-1), end = " ")
-	
+            print(daily_cases()[t-1], end = " ")
+    
+def plot_daily_cases():
+    plt.plot(daily_cases())
+    plt.show()
+
+def plot_net_cases():
+    plt.plot(net_cases_list())
+    plt.show()
+
 #These are just debug functions to check that cases <= population everywhere    
 def compat(t):
     for i in range(1, gridx):
